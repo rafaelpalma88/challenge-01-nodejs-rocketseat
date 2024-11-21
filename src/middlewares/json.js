@@ -12,11 +12,9 @@ export async function json(req,res) {
 
   } catch (error) {
       req.body = null
-      console.error('error xxx', error)
-
+      console.error('error', error)
   }
 
-  return res
-  .setHeader('Content-Type', 'application/json')
+  return res.setHeader('Content-Type', 'application/json')
   
 }

@@ -19,27 +19,33 @@ export const routes = [
     method: 'POST',
     path: buildRoutePath('/tasks'),
     handler: async (req, res) => {
-        const contentType = req.headers['content-type'];
 
-        if (contentType === 'application/json') {
-            const { title, description } = req.body;
+        const { title, description } = req.body;
 
-            const task = {
-                id: randomUUID(),
-                title,
-                description,
-                created_at: new Date(),
-                completed_at: null
-            };
-
-            database.insert('tasks', task);
-
-            return res.writeHead(201).end();
-        } else if (contentType === 'text/csv') {
-            
-          console.log('caiu aqui xxx')
-          // Processa CSV
+        if (!title) {
+          return res.writeHead(400).end(
+            JSON.stringify({ message: 'title is required' }),
+          )
         }
+
+        if (!description) {
+          return res.writeHead(400).end(
+            JSON.stringify({message: 'description is required' })
+          )
+        }
+
+        const task = {
+            id: randomUUID(),
+            title,
+            description,
+            created_at: new Date(),
+            completed_at: null
+        };
+
+        database.insert('tasks', task);
+
+        return res.writeHead(201).end();
+        
     }
   },
   {
