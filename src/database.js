@@ -57,13 +57,19 @@ export class Database {
 
     update(table, id, data) {
 
-        if (this.#database[table] && Array.isArray(this.#database[table])) {
-            const rowIndex = this.#database[table].findIndex(row => row.id === id)
+        const rowIndex = this.#database[table].findIndex(row => row.id === id)
 
-            if (rowIndex > -1) {
-                this.#database[table] = { id, ...data, updated_at: new Date()}
-                this.#persist()
-            }
+        if (rowIndex > -1) {
+
+            const existingRow = this.#database[table][rowIndex];
+
+            this.#database[table][rowIndex] = {
+                ...existingRow,
+                ...data,
+                updated_at: new Date() 
+            };
+            
+            this.#persist()
         }
 
     }
@@ -72,11 +78,14 @@ export class Database {
         const rowIndex = this.#database[table].findIndex(row => row.id === id)
 
         if (rowIndex > -1) {
-            const row = this.#database[table][rowIndex];
 
-            const { title, description, created_at} = row
+            const existingRow = this.#database[table][rowIndex];
 
-            this.#database[table] = { id, title, description, created_at, completed_at: new Date()}
+            this.#database[table][rowIndex] = {
+                ...existingRow,
+                completed_at: new Date() 
+            };
+
             this.#persist()
         }
        
