@@ -6,11 +6,9 @@ const database = new Database()
 
 export const routes = [
   {
-    // Listagem de todas as tasks
     method: 'GET',
     path: buildRoutePath('/tasks'),
     handler: (req, res) => {
-     
       const tasks = database.select('tasks')
 
       return res.end(JSON.stringify(tasks))
@@ -18,16 +16,10 @@ export const routes = [
     }
   },
   {
-    // Criação de uma task
     method: 'POST',
     path: buildRoutePath('/tasks'),
     handler: (req, res) => {
       const { title, description  } = req.body
-
-     //- `id` - Identificador único de cada task
-      //- `completed_at` - Data de quando a task foi concluída. O valor inicial deve ser `null`
-      //- `updated_at` - Deve ser sempre alterado para a data de quando a task foi atualizada.
-
 
       const task = { 
         id: randomUUID(), 
@@ -42,7 +34,6 @@ export const routes = [
     }
   },
   {
-    // Remover uma task pelo `id`
     method: 'DELETE',
     path: buildRoutePath(`/tasks/:id`),
     handler: (req, res) => {
@@ -54,27 +45,24 @@ export const routes = [
     }
   },
   {
-    // Marcar pelo `id` uma task como completa
     method: 'PATCH',
     path: buildRoutePath(`/tasks/:id/complete`),
     handler: (req, res) => {
       const { id  } = req.params;
-      const { nome, email } = req.body;
 
-      database.update('tasks', id, {nome, email})
+      database.complete('tasks', id)
 
       return res.writeHead(204).end()
     }
   },
   {
-    // Atualização de uma task pelo `id`
     method: 'PUT',
     path: buildRoutePath(`/tasks/:id`),
     handler: (req, res) => {
       const { id  } = req.params;
-      const { nome, email } = req.body;
+      const { title, description } = req.body;
 
-      database.update('tasks', id, {nome, email})
+      database.update('tasks', id, {title, description})
 
       return res.writeHead(204).end()
     }

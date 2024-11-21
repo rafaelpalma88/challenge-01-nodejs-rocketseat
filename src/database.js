@@ -46,6 +46,7 @@ export class Database {
     }
 
     delete(table, id) {
+        
         const rowIndex = this.#database[table].findIndex(row => row.id === id)
 
         if (rowIndex > -1) {
@@ -55,12 +56,30 @@ export class Database {
     }
 
     update(table, id, data) {
+
+        if (this.#database[table] && Array.isArray(this.#database[table])) {
+            const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+            if (rowIndex > -1) {
+                this.#database[table] = { id, ...data, updated_at: new Date()}
+                this.#persist()
+            }
+        }
+
+    }
+
+    complete(table, id) {
         const rowIndex = this.#database[table].findIndex(row => row.id === id)
 
         if (rowIndex > -1) {
-            this.#database[table] = { id, ...data}
+            const row = this.#database[table][rowIndex];
+
+            const { title, description, created_at} = row
+
+            this.#database[table] = { id, title, description, created_at, completed_at: new Date()}
             this.#persist()
         }
+       
     }
 
 }

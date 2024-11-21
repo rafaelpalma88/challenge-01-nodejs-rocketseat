@@ -6,11 +6,11 @@ export async function json(req,res) {
   }
 
   try {
+    const rawData = Buffer.concat(buffers).toString()
 
-      req.body = JSON.parse(Buffer.concat(buffers).toString())
+    req.body = rawData ? JSON.parse(rawData) : null;
 
   } catch (error) {
-
       req.body = null
       console.error('error xxx', error)
 
