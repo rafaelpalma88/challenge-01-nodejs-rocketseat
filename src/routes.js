@@ -14,71 +14,98 @@ export const routes = [
       return res.end(JSON.stringify(tasks))
 
     }
-  },
+  },  
   {
     method: 'POST',
     path: buildRoutePath('/tasks'),
-    handler: (req, res) => {
-      const { title, description  } = req.body
+    handler: async (req, res) => {
+        const contentType = req.headers['content-type'];
 
-      const task = { 
-        id: randomUUID(), 
-        created_at: new Date(), 
-        title, 
-        description 
-      }
+        if (contentType === 'application/json') {
+            const { title, description } = req.body;
 
-      database.insert('tasks', task)
+            const task = {
+                id: randomUUID(),
+                title,
+                description,
+                created_at: new Date(),
+                completed_at: null
+            };
 
-      return res.writeHead(201).end()
+            database.insert('tasks', task);
+
+            return res.writeHead(201).end();
+        } else if (contentType === 'text/csv') {
+            
+          console.log('caiu aqui xxx')
+          // Processa CSV
+        }
     }
   },
   {
     method: 'DELETE',
     path: buildRoutePath(`/tasks/:id`),
     handler: (req, res) => {
-      const { id  } = req.params;
 
-      database.delete('tasks', id)
+      try {
+        const { id  } = req.params;
 
-      return res.writeHead(204).end()
+        database.delete('tasks', id)
+  
+        return res.writeHead(204).end()
+
+      } catch(error) {
+
+        return res.writeHead(404, { 'Content-Type': 'application/json' }).end(
+          JSON.stringify({ message: error.message }) 
+        );
+
+      }
+      
     }
   },
   {
     method: 'PATCH',
     path: buildRoutePath(`/tasks/:id/complete`),
     handler: (req, res) => {
-      const { id  } = req.params;
+      try {
+        const { id  } = req.params;
 
-      database.complete('tasks', id)
+        database.complete('tasks', id)
+  
+        return res.writeHead(204).end()
 
-      return res.writeHead(204).end()
+      } catch(error) {
+
+        return res.writeHead(404, { 'Content-Type': 'application/json' }).end(
+          JSON.stringify({ message: error.message }) 
+        );
+
+      }
     }
   },
   {
     method: 'PUT',
     path: buildRoutePath(`/tasks/:id`),
     handler: (req, res) => {
-      const { id  } = req.params;
-      const { title, description } = req.body;
 
-      database.update('tasks', id, {title, description})
+      try {
+        const { id  } = req.params;
 
-      return res.writeHead(204).end()
+        const { title, description } = req.body;
+  
+        database.update('tasks', id, {title, description})
+  
+        return res.writeHead(204).end()
+
+      } catch(error) {
+
+        return res.writeHead(404, { 'Content-Type': 'application/json' }).end(
+          JSON.stringify({ message: error.message }) 
+        );
+
+      }
     }
   },
-  {
-    // E o verdadeiro desafio: Importação de tasks em massa por um arquivo CSV
-    method: 'XXXXX',
-    path: buildRoutePath('/tasks'),
-    handler: (req, res) => {
-      const { search } = req.query
-      
-      const tasks = database.select('tasks', search ? {
-        nome: search,
-        email: search
-      }: null)
-      return res.end(JSON.stringify(tasks))
-    }
-  },
+  // E o verdadeiro desafio: Importação de tasks em massa por um arquivo CSV
 ]

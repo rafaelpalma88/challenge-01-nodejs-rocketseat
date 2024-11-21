@@ -52,6 +52,8 @@ export class Database {
         if (rowIndex > -1) {
             this.#database[table].splice(rowIndex, 1)
             this.#persist()
+        } else {
+            throw new Error('Usuário não encontrado')
         }
     }
 
@@ -70,6 +72,8 @@ export class Database {
             };
             
             this.#persist()
+        } else {
+            throw new Error('Usuário não encontrado')
         }
 
     }
@@ -87,6 +91,8 @@ export class Database {
             };
 
             this.#persist()
+        } else {
+            throw new Error('Usuário não encontrado')
         }
        
     }
